@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    ports:
+      - ${PORT:-3000}:8000
+    volumes:
+      - .:/home/app/php
