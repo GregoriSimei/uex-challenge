@@ -1,15 +1,16 @@
-FROM php:8.2.25-cli-alpine
+FROM php:8.3-cli-alpine
 
 WORKDIR /home/app/setup
 
 RUN apk --update upgrade
 
-## install composer
-COPY .docker/php/composer-config.sh ./setup-composer.sh
+## composer configuration
+COPY .docker/php .
+RUN ./composer-config.sh && rm -f ./composer-config.sh
 
-RUN chmod +x ./setup-composer.sh
-RUN ./setup-composer.sh && rm -f ./setup-composer.sh
-
+## postgres configuration
+RUN apk add --no-cache postgresql-dev && \
+    docker-php-ext-install pdo_pgsql pgsql
 
 ## install laravel
 RUN composer global require laravel/installer
