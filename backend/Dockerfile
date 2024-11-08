@@ -16,8 +16,10 @@ RUN apk add --no-cache postgresql-dev && \
 RUN composer global require laravel/installer
 ENV PATH="$PATH:/root/.composer/vendor/bin"
 
-## redis configuration (it uses composer)
-RUN composer require predis/predis:^2.0
+## redis configuration
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS && \
+    pecl install redis && \
+    docker-php-ext-enable redis.so
 
 WORKDIR /home/app/php
  
