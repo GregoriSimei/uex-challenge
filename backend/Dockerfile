@@ -16,6 +16,9 @@ RUN apk add --no-cache postgresql-dev && \
 RUN composer global require laravel/installer
 ENV PATH="$PATH:/root/.composer/vendor/bin"
 
-WORKDIR /home/app/php
+## redis configuration (it uses composer)
+RUN composer require predis/predis:^2.0
 
-CMD tail -f /dev/null
+WORKDIR /home/app/php
+ 
+CMD php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000

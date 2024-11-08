@@ -1,12 +1,15 @@
 services:
   app:
     build: .
+    restart: on-failure:3
     ports:
       - ${PORT:-3000}:8000
     volumes:
       - .:/home/app/php
     depends_on:
       db:
+        condition: service_healthy
+      cache:
         condition: service_healthy
   
   db:
@@ -27,6 +30,15 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
       - ./.docker/db:/docker-entrypoint-initdb.d/
+
+  cache:
+    image: redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   db:
